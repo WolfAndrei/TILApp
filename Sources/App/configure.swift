@@ -74,8 +74,11 @@ public func configure(_ app: Application) throws {
         password: Environment.get("DATABASE_PASSWORD") ?? "vapor_password",
         database: Environment.get("DATABASE_NAME") ?? "vapor_database"
     ), as: .psql)
-
-    app.migrations.add(CreateAcronym())
+    
+    //Order is important
+    app.migrations.add(CreateUser())    // parent
+    app.migrations.add(CreateAcronym()) // children
+    
     app.logger.logLevel = .debug
     
     try app.autoMigrate().wait()
