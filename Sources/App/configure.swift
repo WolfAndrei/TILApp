@@ -78,6 +78,21 @@ public func configure(_ app: Application) throws {
     //Order is important
     app.migrations.add(CreateUser())    // parent
     app.migrations.add(CreateAcronym()) // children
+    app.migrations.add(CreateCategory())
+    app.migrations.add(CreateAcronymCategoryPivot()) // binding acronym && category for more efficiently quering on db
+    /*
+     for example,
+     category might contain an array of acronyms
+     and in its turn acronym might contain an array of categories
+     
+     "Slang"- [
+            "Omg",
+              |->["Slang", "Old-fashioned"]
+            "LOL"
+              |->["Slang"]
+     ]
+     */
+    
     
     app.logger.logLevel = .debug
     

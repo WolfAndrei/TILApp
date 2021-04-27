@@ -11,7 +11,7 @@ import Fluent
 final class Acronym: Model {
     static let schema = "acronyms"          //table name in db
     
-    @ID                    // @ID = .init(key: .id) == FieldKey(stringLiteral: "id")--- it identifies that we use namely 'id' key
+    @ID                                     // @ID = .init(key: .id) --- it identifies that we use namely 'id' key
     var id: UUID?
     
     @Field(key: "short")                    // key - is a name of the column in db!
@@ -23,6 +23,8 @@ final class Acronym: Model {
     @Parent(key: "userID")
     var user: User
     
+    @Siblings(through: AcronymCategoryPivot.self, from: \.$acronym, to: \.$category)
+    var categories: [Category]
     
     init() { }                              // required by Model
     
