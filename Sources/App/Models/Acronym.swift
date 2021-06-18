@@ -11,7 +11,7 @@ import Fluent
 final class Acronym: Model {
     static let schema = "acronyms"          //table name in db
     
-    @ID                                     // @ID = .init(key: .id) --- it identifies that we use namely 'id' key
+    @ID                                     // @ID = .init(key: .id) --- it identifies that we use exactly 'id' key
     var id: UUID?
     
     @Field(key: "short")                    // key - is a name of the column in db!
@@ -36,4 +36,5 @@ final class Acronym: Model {
     }
 }
 
+//In Vapor 4, Codable makes this trivial. Vapor provides Content, a wrapper around Codable, which allows you to convert models and other data between various formats.
 extension Acronym: Content { }

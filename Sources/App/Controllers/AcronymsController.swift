@@ -33,7 +33,7 @@ struct AcronymsController: RouteCollection {
         acronymRoutes.post(":acronymID", "categories", ":categoryID", use: addCategoriesHandler)
         acronymRoutes.delete(":acronymID", "categories", ":categoryID", use: removeCategoriesHandler)
         
-        ///Search
+        ///Search - http://localhost/api/acronyms/search?term=LOL
         acronymRoutes.get("search", use: searchHandler)
         
         ///Update
@@ -60,7 +60,15 @@ struct AcronymsController: RouteCollection {
     }
     
     func getSortedHandler(_ req: Request) -> EventLoopFuture<[Acronym]> {
-        Acronym.query(on: req.db).sort(\.$short, .ascending).all()
+        Acronym.query(on: req.db).sort(\Acronym.$short, .ascending).all()
+    }
+    
+    func getUserHandler(_ req: Request) -> EventLoopFuture<User> {
+        Acronym.find(req.parameters.get("acronymID"), on: req.db)
+            .unwrap(or: Abort(.notFound))
+            .flatMap { acronym in
+                acronym.$user.get(on: req.db)
+            }
     }
     
     /// GET - Search
@@ -126,13 +134,17 @@ struct AcronymsController: RouteCollection {
                         }
     }
     
-    func getUserHandler(_ req: Request) -> EventLoopFuture<User> {
-        Acronym.find(req.parameters.get("acronymID"), on: req.db)
+    
+    func getCategoriesHandler(_ req: Request) -> EventLoopFuture<[Category]> {
+        Acronym
+            .find(req.parameters.get("acronymID"), on: req.db)
             .unwrap(or: Abort(.notFound))
             .flatMap { acronym in
-                acronym.$user.get(on: req.db)
+                acronym.$categories.query(on: req.db).all()
             }
     }
+    
+    ///Acronym-Category Pivot operations
     
     func addCategoriesHandler(_ req: Request) -> EventLoopFuture<HTTPStatus> {
         let acronymQuery = Acronym.find(req.parameters.get("acronymID"), on: req.db).unwrap(or: Abort(.notFound))
@@ -144,15 +156,6 @@ struct AcronymsController: RouteCollection {
                     .$categories
                     .attach(category, on: req.db)
                     .transform(to: .created)
-            }
-    }
-    
-    func getCategoriesHandler(_ req: Request) -> EventLoopFuture<[Category]> {
-        Acronym
-            .find(req.parameters.get("acronymID"), on: req.db)
-            .unwrap(or: Abort(.notFound))
-            .flatMap { acronym in
-                acronym.$categories.query(on: req.db).all()
             }
     }
     

@@ -21,7 +21,7 @@ final class User: Model, Content {
     @Field(key: "username")
     var username: String
     
-    @Children(for: \.$user)
+    @Children(for: \Acronym.$user) //     \.$user  -  shortcut
     var acronyms: [Acronym]
     
     init() { }
