@@ -1,11 +1,15 @@
 import Fluent
 import FluentPostgresDriver
 import Vapor
+import Leaf
 
 // configures your application
 // uncomment to serve files from /Public folder
 // app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
 public func configure(_ app: Application) throws {
+    
+    //website, working with static files
+    app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
     
     let databaseName: String
     let databasePort: Int
@@ -112,7 +116,11 @@ public func configure(_ app: Application) throws {
     
     app.logger.logLevel = .debug
     
+    //db config
     try app.autoMigrate().wait()
+    
+    //website config
+    app.views.use(.leaf)
     
     // register routes
     try routes(app)

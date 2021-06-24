@@ -14,6 +14,7 @@ let package = Package(
                                               //fluent-sqlite-driver     4.0.0
                                               //fluent-mysql-driver      4.0.0
                                               //fluent-mongo-driver      1.0.0
+        .package(url: "https://github.com/vapor/leaf.git", from: "4.0.0"),
     ],
     targets: [
         .target(
@@ -24,7 +25,8 @@ let package = Package(
                              // FluentSQLiteDriver               fluent-sqlite-driver
                              // FluentMySQLDriver                fluent-mysql-driver
                              // FluentMongoDriver                fluent-mongo-driver
-                .product(name: "Vapor", package: "vapor")
+                .product(name: "Vapor", package: "vapor"),
+                .product(name: "Leaf", package: "leaf")
             ],
             swiftSettings: [
                 // Enable better optimizations when building in Release configuration. Despite the use of
